@@ -1,0 +1,118 @@
+
+<script>
+    $(document).ready(function () {
+
+        function fillEditForm(id, name) {
+            $('#editId').val(id);
+            $('#editNameCategoryProduct').val(name);
+        }
+
+        function updateTable(sortOrder) {
+            $.ajax({
+                url: '/editDeleteProductCategory',
+                type: 'GET',
+                data: {
+                    sortOrder: sortOrder
+                },
+                success: function (data) {
+                    $('#productCategoryTable').html($(data).find('#productCategoryTable').html());
+
+                },
+                error: function (xhr, status, error) {
+                    // Обработка ошибок, если требуется
+                }
+            });
+        }
+
+        var sortOrder = /*[[${sortOrder}]]*/ 'asc'; // Используем стандартное значение, если Thymeleaf не сработает// Используем стандартное значение, если Thymeleaf не сработает
+
+        $(document).on('click', 'th.sortable', function () {
+            sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+            updateTable(sortOrder);
+        });
+        $('.editProductCategoryBtn').click(function () {
+            var id = $(this).data('id');
+            var name = $(this).closest('tr').find('input[name="name_category"]').val();
+
+            fillEditForm(id, name);
+
+            $.ajax({
+                type: 'POST',
+                url: '/editProductCategory',
+                data: $('#editProductCategoryForm').serialize(),
+                success: function (response) {
+                    toastr.options.progressBar = true;
+                    toastr.success('Товар успешно изменен!');
+                    console.log("вызываюсь")
+                },
+                error: function (xhr, status, error) {
+                    toastr.error('Произошла ошибка при изменении товара!');
+                }
+            });
+        });
+        $('.deleteProductCategory').click(function (e) {
+            e.preventDefault();
+            var formData = $(this).closest('form').serialize();
+            var form = $(this).closest('form');
+            var url = form.attr('action');
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: formData,
+                success: function (response) {
+                    toastr.options.progressBar = true;
+                    toastr.success('Товар успешно удален!');
+                    form.closest('tr').remove();
+                },
+                error: function (xhr, status, error) {
+                    toastr.error('Произошла ошибка при удалении товара!');
+                }
+            });
+        });
+    });
+</script>
+<div id="content">
+    <table class="table" id="productCategoryTable">
+        <thead class="table-light">
+        <tr>
+            <th scope="col" class="text-center sortable" id="idCategoryHeader" style="cursor: pointer;">id_category
+            </th>
+            <th scope="col" class="text-center">name_category</th>
+            <th scope="col" class="text-center">Изменить</th>
+            <th scope="col" class="text-center">Удалить</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="products : ${productCategories}">
+
+
+            <td class="text-center " type="text">
+                <input class="text-center form-control" readonly type="text"
+                       name="id_category" th:value="${products.id_category}"/>
+            </td>
+            <td class="text-center" type="text">
+                <input class="text-center form-control" type="text" name="name_category"
+                       th:value="${products.name_category}"/>
+            </td>
+            <td class="text-center">
+                <button type="submit" class="btn  btn-sm editProductCategoryBtn"
+                        th:data-id="${products.id_category}">Изменить
+                </button>
+            </td>
+
+            <td class="text-center">
+                <form method="POST" class="deleteProductCategory" th:action="@{/deleteProductCategory}">
+                    <input type="hidden" name="id" th:value="${products.id_category}"/>
+                    <button type="submit" class="btn  btn-sm">Удалить</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+
+    </table>
+</div>
+<form id="editProductCategoryForm" method="post" style="display: none;">
+    <input type="hidden" name="id" id="editId"/>
+    <input type="text" name="name_category" id="editNameCategoryProduct"/>
+</form>

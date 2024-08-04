@@ -1,0 +1,139 @@
+
+<script>
+    $(document).ready(function () {
+        function fillEditForm(id, name, price,description) {
+            $('#editId').val(id);
+            $('#editNameProduct').val(name);
+            $('#editDescription').val(description);
+            $('#editPrice').val(price);
+        }
+
+        function updateTable(sortField, sortOrder) {
+            $.ajax({
+                url: '/editDeleteProduct',
+                type: 'GET',
+                data: {
+                    sortField: sortField,
+                    sortOrder: sortOrder
+                },
+                success: function (data) {
+                    $('#productTable').html($(data).find('#productTable').html());
+
+                },
+                error: function (xhr, status, error) {
+                    // Обработка ошибок, если требуется
+                }
+            });
+        }
+
+        var sortOrder = /*[[${sortOrder}]]*/ 'asc'; // Используем стандартное значение, если Thymeleaf не сработает
+        var sortField = /*[[${sortField}]]*/ 'price'; // Используем стандартное значение, если Thymeleaf не сработает
+
+        $(document).on('click', 'th.sortable', function () {
+            var field = $(this).data('field');
+            sortOrder = (sortOrder === 'asc') ? 'desc' : 'asc';
+            sortField = field;
+            updateTable(sortField, sortOrder);
+        });
+
+        $(document).on('click', '.editProductBtn', function () {
+            var id = $(this).data('id');
+            var name = $(this).closest('tr').find('input[name="name_product"]').val();
+            var price = $(this).closest('tr').find('input[name="price"]').val();
+            var description = $(this).closest('tr').find('input[name="description"]').val();
+            fillEditForm(id, name, price,description);
+
+            $.ajax({
+                type: 'POST',
+                url: '/editProduct',
+                data: $('#editProductForm').serialize(),
+                success: function (response) {
+                    toastr.options.progressBar = true;
+
+                    toastr.success('Товар успешно изменен!');
+
+                },
+                error: function (xhr, status, error) {
+                    toastr.error('Произошла ошибка при изменении товара!');
+                }
+            });
+        });
+
+        $(document).on('click', '.deleteProductForm', function (e) {
+            e.preventDefault();
+            var formData = $(this).closest('form').serialize();
+            var form = $(this).closest('form');
+            var url = form.attr('action');
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: formData,
+                success: function (response) {
+                    toastr.options.progressBar = true;
+                    toastr.success('Товар успешно удален!');
+                    form.closest('tr').remove();
+                },
+                error: function (xhr, status, error) {
+                    toastr.error('Произошла ошибка при удалении товара!');
+                }
+            });
+        });
+
+    });
+</script>
+<p th:text="'Welcome, ' + ${name} + '!'"></p>
+<div id="content">
+
+
+    <table class="table" id="productTable">
+        <thead class="table-light">
+        <tr>
+            <th scope="col" class="text-center sortable" id="idProductHeader" data-field="id_product" style="cursor: pointer;">id_product</th>
+            <th scope="col" class="text-center">Название товара</th>
+            <th scope="col" class="text-center sortable" id="priceHeader" data-field="price" style="cursor: pointer;">Цена</th>
+            <th scope="col" class="text-center">Описание</th>
+            <th scope="col" class="text-center">Изменить</th>
+            <th scope="col" class="text-center">Удалить</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="products : ${product}">
+
+            <td class="text-center" type="text">
+                <input type="text" class="form-control" readonly name="id_product" th:value="${products.id_product}"/>
+            </td>
+            <td class="text-center" type="text">
+                <input type="text" class="form-control" name="name_product" th:value="${products.name_product}"/>
+            </td>
+
+            <td class="text-center priceCell" type="text">
+                <input type="text" class="form-control" name="price" th:value="${products.price}"/>
+            </td>
+            <td class="text-center" type="text">
+                <input type="text" class="form-control" name="description" th:value="${products.description}"/>
+            </td>
+            <td class="text-center">
+                <button type="button" class="btn  btn-sm editProductBtn"
+                        th:data-id="${products.id_product}">
+                    Изменить
+                </button>
+
+            </td>
+            <td class="text-center">
+                <form class="deleteProductForm" method="POST" th:action="@{/deleteProduct}">
+                    <input type="hidden" name="id" th:value="${products.id_product}"/>
+                    <button type="submit" class="btn  btn-sm ">Удалить</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+
+    </table>
+</div>
+<form id="editProductForm" method="post" style="display: none;">
+    <input type="hidden" name="id" id="editId"/>
+    <input type="text" name="name_product" id="editNameProduct"/>
+    <input type="text" name="description" id="editDescription"/>
+    <input type="text" name="price" id="editPrice"/>
+</form>

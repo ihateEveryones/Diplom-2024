@@ -1,0 +1,263 @@
+<div th:fragment="copy" class="offcanvas offcanvas-end" data-bs-scroll="false" data-bs-backdrop="false" tabindex="-1"
+     id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+
+
+    <div class="offcanvas-header">
+        <a href="profile_user_test.html">
+            <i class="bi bi-person-circle iconProfile" style=""></i>
+        </a>
+        <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Выбор записи</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+
+    <div class="offcanvas-body">
+        <a href="#" class="btn btn-secondary fixed-button hide" id="goBackBtn">Назад</a>
+
+        <div class=" showMastersBtn" id="masterSelection">
+            <div id="selectMaster">Выбрать Мастера</div>
+            <!-- Выбор Мастера -->
+            <!--                        <a href="#" class="btn " id="showMastersBtn">Выбор Мастера</a>-->
+            <!-- Отображение мастеров -->
+            <div class="container " id="mastersList">
+                <!-- Список мастеров -->
+                <div class="card master-card" th:each="masters : ${master}" th:name="${masters.id}">
+                    <div class="card-body   select-master">
+                        <div class="masterInfo">
+                            <div class="masterImage">
+                                <img th:src="${masters.image}"
+                                     class="customImg">
+                            </div>
+                            <div class="masterDetails">
+                                <div class="masterName">
+<!--                                    <a th:href="@{/master/{id}(id=${masters.id})}" class="link"-->
+<!--                                    >-->
+<!--                                        -->
+<!--                                    </a>-->
+                                    <h5 class="card-title " th:text="${masters.name}"></h5>
+                                </div>
+                                <div class="DescriptionMaster">
+                                    <p class="card-text">Меня зовут Олег и я готов поработать над вашей внешностью.
+                                        Очень
+                                        нравится
+                                        стричь. Учусь у лучших, чтобы стать лучше. Приходите буду рад преобразить
+                                        вас.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="masterRadio">
+                            <input type="radio" name="id_master" th:value="${masters.id}">
+                        </div>
+
+                    </div>
+                </div>
+                <button class="btn fixed-button-Continue hide" id="continueBtn1">Выбрать услугу</button>
+            </div>
+        </div>
+        <div class=" hide showServicesBtn" id="serviceSelection">
+            <div id="selectService">Выбрать услугу</div>
+            <!--            <a href="#" class="btn " id="showServicesBtn">Выбор Услуги</a>-->
+            <div id="selectedServices"></div>
+            <div class="container " id="servicesList">
+                <div th:each="categorie : ${categories}" class="row ptb20 selection-box selCat"
+                     th:attr="data-category=${categorie.id_category}">
+
+                    <div class="col-6" th:text="${categorie.name_category}">
+                        <!-- Вывод названия категории -->
+                        Категория 1
+                    </div>
+                    <div class="col-6 text-end">
+                        <i class="bi bi-caret-down-fill"></i>
+                    </div>
+                    <!-- Вывод соответствующих услуг для текущей категории -->
+                    <div class="container hide  servCat" th:attr="data-category-services=${categorie.id_category}">
+                        <div th:each="categoryService : ${categorie.categoryServices}"
+                             th:name="'services'+${categoryService.id_service.id_service}">
+                            <div class="card service-card" th:id="${categoryService.id_service.id_service}">
+                                <div class="card-body select-service">
+                                    <div class="serviceInfo">
+                                        <div class="serviceName">
+<!--                                            <a th:href="@{/service/{id}(id=${categoryService.id_service.id_service})}">-->
+<!--                                                -->
+<!--                                            </a>-->
+                                            <h5 class="card-title"
+                                                th:text="${categoryService.id_service.name_service}">
+                                            </h5>
+                                        </div>
+                                        <div class="serviceDuration">
+                                            <!--                                            <p th:text="'Длительность: '+${categoryService.id_service.duration}+' минут'"></p>-->
+                                            <p th:text="${formattedDurations.get(categoryService.id_service.id_service)}"></p>
+
+                                        </div>
+
+
+                                        <input type="hidden" name="duration"
+                                               th:value="${categoryService.id_service.duration}">
+                                        <input type="hidden" name="price"
+                                               th:value="${categoryService.id_service.price}">
+                                    </div>
+                                    <div class="serviceCheckbox">
+                                        <div class="servicePrice">
+                                            <p class="pServicePrice"
+                                               th:text="${#numbers.formatDecimal(categoryService.id_service.price, 0, 'COMMA', 0, 'POINT').replace(',', ' ')}"></p>
+                                        </div>
+                                        <input type="checkbox" th:value="${categoryService.id_category_services}"
+                                               name="id_category_services" class="service-checkbox">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Добавьте больше карточек услуг по аналогии -->
+                <input type="hidden" name="totalDuration">
+
+            </div>
+            <button class="btn hide fixed-button-Continue mt-2 " type="button" id="continueServiceBtn">Выбрать
+                товары
+            </button>
+            <div id="selectedServicesContainer" class="hide"></div>
+            <!-- Дополнительный контент или форма для выбора услуги -->
+        </div>
+        <input type="hidden" id="orderState" value="">
+        <input type="hidden" id="currentSelection" value="">
+        <div class=" hide showProductBtn" id="productSelection">
+            <div id="selectProduct">Выбрать товар</div>
+            <!--            <a href="#" class="btn " id="showProductBtn">Выбор товара</a>-->
+            <div id="selectedProduct"></div>
+            <div class="container " id="ProductList">
+                <div th:each="categorie : ${categoriesProd}" class="row ptb20 selection-box prodCat"
+                     th:attr="data-category=${categorie.id_category}">
+
+                    <div class="col-6" th:text="${categorie.name_category}">
+                        <!-- Вывод названия категории -->
+                        Категория 1
+                    </div>
+                    <div class="col-6 text-end">
+                        <i class="bi bi-caret-down-fill"></i>
+                    </div>
+                    <!-- Вывод соответствующих услуг для текущей категории -->
+                    <div class="container hide productCat" th:attr="data-category-services=${categorie.id_category}">
+                        <div th:each="cat : ${cats}" th:if="${cat.id_category.id_category == categorie.id_category}">
+
+                            <div class="card product-card flex-column" th:id="${cat.id_product_category}">
+                                <div class="productImgCard">
+                                    <img th:src="${cat.id_product.productImage}" class="imgCard"
+                                         alt="Изображение товара">
+                                </div>
+                                <div class="card-body select-product ">
+                                    <div class="productInfo">
+                                        <div class="productName">
+<!--                                            <a th:href="@{/product/{id}(id=${cat.id_product.id_product})}"-->
+<!--                                            ></a>-->
+                                            <h5 class="card-title"
+                                                th:text="${cat.id_product.name_product}">
+                                            </h5>
+                                        </div>
+                                        <!-- Вывод названия услуги -->
+
+
+                                        <input type="hidden" name="productPrice"
+                                               th:value="${cat.id_product.price}">
+                                    </div>
+                                    <div class="productCheckbox">
+                                        <div class="priceProduct">
+                                            <span> </span>
+                                            <p class="pProductPrice"
+                                               th:text="${#numbers.formatDecimal(cat.id_product.price, 0, 'COMMA', 0, 'POINT').replace(',', ' ')}"></p>
+                                        </div>
+                                        <input type="checkbox" th:value="${cat.id_product_category}"
+                                               name="id_product_category" class="product-checkbox">
+                                    </div>
+                                </div>
+                                <div class="descriptionProduct">
+                                    <p th:text="${cat.id_product.description}" class="card-text"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Добавьте больше карточек услуг по аналогии -->
+                <input type="hidden" name="totalDuration">
+            </div>
+            <button class="btn  mt-2 hide fixed-button-Continue" type="button" id="continueProductBtn">Выбрать дату и
+                время
+            </button>
+            <div id="selectedProductContainer" class="hide"></div>
+            <!-- Дополнительный контент или форма для выбора услуги -->
+        </div>
+
+        <div class=" hide showDateTimeBtn" id="dateTimeSelection">
+            <div id="selectDateTime">Выбрать дату и время</div>
+            <!--            <a href="#" class="btn" id="showDateTimeBtn">Выбор даты и времени</a>-->
+            <div class="container " id="dateTimeList">
+                <div class=" dateTime-card">
+
+
+                    <!-- Поле выбора даты -->
+                    <!--                    <input type="date" id="datepicker" name="date" class="form-control" placeholder="Выберите дату"/>-->
+                    <input type="date" id="datepicker" name="date" class="form-control" placeholder="Выберите дату"/>
+                    <div id="times" th:data-times="${times}"></div>
+                    <!--        <input type="radio" id="timeOptions" name="time" th:each="time : ${times}" th:value="${time}" th:text="${time}">-->
+                    <div id="timeOptionsContainer"></div>
+
+                    <div th:each="order : ${orders}">
+                        <p class="orderDetails" style="display: none;"
+                           th:text="'Date: ' + ${order[0]} + ', Start time: ' + ${order[1]} + ', End time: ' + ${order[2]}"></p>
+                    </div>
+                </div>
+            </div>
+            <button class="btn fixed-button-Continue hide mt-2 " type="button" id="continueBtnDate">Перейти к
+                оформлению
+            </button>
+        </div>
+        <div class="orderForm hide">
+            <form method="post" th:action="@{/createOrder}">
+                <div class="master"></div>
+                <div class="dateTime">
+                    <!--                    <div class="divCalendar">-->
+                    <!--                        <i class="bi bi-calendar"></i>-->
+                    <!--                    </div>-->
+                </div>
+                <div class="allServicesCard services">
+                    <div class="serviceEditIcon">
+                        <div>
+                            <span class="serviceSpan">
+                                Услуги
+                                <span class="allDuration">
+
+                                </span>
+                            </span>
+                        </div>
+                        <div>
+                            <i class="bi bi-pencil editIconService" style="cursor: pointer;"></i>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="allProductCard products">
+                    <div class="productEditIcon">
+                        <div>
+                            <span class="productSpan">
+                                Товары
+                            </span>
+                        </div>
+                        <div>
+                            <i class="bi bi-pencil editIconProduct" style="cursor: pointer;"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="totalPrice">
+                    <div class="spanTotalPrice">
+                        <span>Итого:</span>
+                    </div>
+
+                    <input type="hidden" name="totalPrice" id="totalPrice" value="0">
+                </div>
+                <button class="btn endOrderButton mt-2 " id="order1">Записаться</button>
+            </form>
+        </div>
+    </div>
+
+    <!--    &lt;!&ndash;    <button class="btn btn-primary mt-2 " id="order">Записаться</button>&ndash;&gt;-->
+
+</div>

@@ -1,0 +1,154 @@
+
+<script>
+    $(document).ready(function () {
+        function fillEditForm(id, name, price,duration,description) {
+            $('#editId').val(id);
+            $('#editNameService').val(name);
+            $('#editPrice').val(price);
+            $('#editDuration').val(duration);
+            $('#editDescription').val(description);
+            // Здесь вы можете заполнить остальные поля формы, если они есть
+        }
+
+        function updateTableService(sortFieldService, sortOrderService) {
+            $.ajax({
+                url: '/editDeleteService',
+                type: 'GET',
+                data: {
+                    sortFieldService: sortFieldService,
+                    sortOrderService: sortOrderService
+                },
+                success: function (data) {
+                    $('#serviceTable').html($(data).find('#serviceTable').html());
+                },
+                error: function (xhr, status, error) {
+                    // Обработка ошибок, если требуется
+                }
+            });
+        }
+
+        var sortOrderService = /*[[${sortOrderService}]]*/ 'asc'; // Используем стандартное значение, если Thymeleaf не сработает
+        var sortFieldService = /*[[${sortFieldService}]]*/ 'price'
+        $(document).on('click', 'th.sortable', function () {
+            var fieldService = $(this).data('field');
+            sortOrderService = (sortOrderService === 'asc') ? 'desc' : 'asc';
+            sortFieldService = fieldService;
+            updateTableService(sortFieldService, sortOrderService);
+        });
+        $(document).on('click', '.editServiceBtn', function () {
+            var id = $(this).data('id');
+            var name = $(this).closest('tr').find('input[name="name_service"]').val();
+            var price = $(this).closest('tr').find('input[name="price"]').val();
+            var duration = $(this).closest('tr').find('input[name="duration"]').val();
+            var description = $(this).closest('tr').find('input[name="description"]').val();
+            fillEditForm(id, name, price,duration,description); // Заполняем форму данными из строки таблицы
+
+            // Отправляем AJAX запрос
+            $.ajax({
+                type: 'POST',
+                url: '/editService', // Укажите URL для обработки формы на сервере
+                data: $('#editServicesForm').serialize(), // Сериализуем данные формы
+                success: function (response) {
+                    toastr.options.progressBar = true;
+                    toastr.success('Услуга успешно изменена!');
+                },
+                error: function (xhr, status, error) {
+                    // Обработка ошибки
+                }
+            });
+        });
+
+        $(document).on('click', '.deleteServiceForm', function (e) {
+            e.preventDefault(); // Предотвращаем обычное поведение формы
+            var formData = $(this).serialize(); // Сериализуем данные формы
+            var form = $(this);
+            var url = $(this).attr('action');
+            $.ajax({
+                type: 'POST',
+                url: url, // Адрес обработчика формы на сервере
+                data: formData,
+                success: function (response) {
+                    toastr.options.progressBar = true;
+                    toastr.success('Услуга успешно удалена!');
+                    // Если запрос успешен, вы можете выполнить дополнительные действия здесь
+                    form.closest('tr').remove();
+
+                },
+                error: function (error) {
+                    toastr.error('Произошла ошибка при удалении услуги!');
+
+                }
+            });
+        });
+
+    });
+</script>
+<div></div>
+<div id="content">
+
+
+    <table class="table" id="serviceTable">
+        <thead class="table-light">
+        <tr>
+            <th scope="col" class="text-center sortable" id="idProductHeader" data-field="id_service"
+                style="cursor: pointer;">id_service
+            </th>
+            <th scope="col" class="text-center">Название услуги</th>
+            <th scope="col" class="text-center sortable" id="priceHeader" data-field="price" style="cursor: pointer;">
+                Цена
+            </th>
+            <th scope="col" class="text-center">Длительность</th>
+            <th scope="col" class="text-center">Описание</th>
+            <th scope="col" class="text-center">Изменить</th>
+            <th scope="col" class="text-center">Удалить</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="service : ${services}">
+            <td class="text-center" type="text">
+                <input type="text" class="form-control" readonly name="id_service" th:value="${service.id_service}"/>
+            </td>
+            <td class="text-center" type="text">
+                <input type="text" class="form-control" name="name_service" th:value="${service.name_service}"/>
+            </td>
+
+            <td class="text-center" type="text">
+                <input type="text" class="form-control" name="price" th:value="${service.price}"/>
+            </td>
+            <td class="text-center" type="text">
+                <input type="text" class="form-control" name="duration" th:value="${service.duration}"/>
+            </td>
+            <td class="text-center" type="text">
+                <input type="text" class="form-control" name="description" th:value="${service.description}"/>
+            </td>
+            <td class="text-center">
+                <button type="button" class="btn  btn-sm editServiceBtn"
+                        th:data-id="${service.id_service}">
+                    Изменить
+                </button>
+            </td>
+            <!--        <td class="text-center">-->
+            <!--            <button type="button" class="btn btn-secondary btn-sm deleteServiceBtn" th:data-id="${service.id_service}">Удалить</button>-->
+            <!--        </td>-->
+            <td class="text-center">
+                <form method="POST" class="deleteServiceForm" id="deleteServiceForm" th:action="@{/deleteService}">
+                    <input type="hidden" name="id" th:value="${service.id_service}"/>
+
+                    <button type="submit" class="btn  btn-sm">Удалить</button>
+
+                </form>
+            </td>
+        </tr>
+        </tbody>
+
+    </table>
+</div>
+<form id="editServicesForm" method="post" style="display: none;">
+    <input type="hidden" name="id" id="editId"/>
+    <input type="text" name="name_service" id="editNameService"/>
+    <input type="text" name="duration" id="editDuration"/>
+    <input type="text" name="description" id="editDescription"/>
+    <input type="text" name="price" id="editPrice"/>
+    <!-- Остальные поля формы -->
+</form>
+

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/css/bootstrap-datepicker.min.css"
+          rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/style.css" type="text/css">
+    <link rel="stylesheet" href="/static/homepage.css" type="text/css">
+    <script src="/static/order.js" type="text/javascript" th:inline="javascript"></script>
+    <script src="/static/freeDateTime.js" type="text/javascript" th:inline="javascript"></script>
+
+</head>
+<body>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <img class="navbar-brand  logo"  src="/image/logo2.png">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto custom-nav-link">
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="/homepage">Главная</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/servicesPage">Услуги</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/productPage">Товары</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <th:block th:if="${#authorization.expression('isAuthenticated()')}">
+                        <div class="profile">
+                            <a th:href="@{/profile}">
+                                <img th:src="@{${image}}" class="img-fluid  min-profile-image" alt="Profile Image"/>
+                            </a>
+                            <div class="profile-options">
+                                <a class="logout-btn" th:href="@{/logout}">Выйти</a>
+                            </div>
+                        </div>
+                    </th:block>
+                    <th:block th:unless="${#authorization.expression('isAuthenticated()')}">
+                        <a class="nav-link" href="/login">Авторизация</a>
+                    </th:block>
+                </li>
+                <th:block th:unless="${#authorization.expression('isAuthenticated()')}">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/registration">Регистрация</a>
+                    </li>
+                </th:block>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="content">
+    <div class="container mt-5">
+        <section id="welcome">
+            <div class="text-center mb-5">
+                <h1>Добро пожаловать в парикмахерскую Танго</h1>
+                <p>Мы рады приветствовать вас на нашем сайте. Ознакомьтесь с нашими услугами и товарами.</p>
+            </div>
+        </section>
+        <section id="services">
+            <h2 class="mb-4">Наши услуги</h2>
+            <div class="row justify-content-between">
+                <div class="col-md-4" th:each="minPrice : ${minPrice}">
+                    <div class="cardHomePage">
+                        <div class="">
+                            <h5 class="card-title" th:text="${minPrice[1]}">Стрижка</h5>
+                            <p class="card-text">Профессиональная стрижка от наших мастеров.</p>
+                            <div class="d-flex">
+                                <p>Цена от </p>
+                                <p class="pServicePrice pl-10"
+                                   th:text=" ${#numbers.formatDecimal(minPrice[2], 0, 'COMMA', 0, 'POINT').replace(',', ' ')}"></p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="products" class="mt-5">
+            <h2 class="mb-4">Наши товары</h2>
+            <div class="row justify-content-between">
+                <div class="col-md-3" th:each="top4PopularCategories : ${top4PopularCategories}">
+                    <div class="cardHomePage minSizeCard">
+                        <div class="productImgCard">
+                            <img th:src="${top4PopularCategories[4]}" class="imgCard" alt="Шампунь">
+                        </div>
+                        <div class="d-flex flex-column flex-grow justify-content-between">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0" th:text="${top4PopularCategories[1]}"></h5>
+                                <p class="pServicePrice text-break mb-0"
+                                   th:text="${#numbers.formatDecimal(top4PopularCategories[2], 0, 'COMMA', 0, 'POINT').replace(',', ' ')}"
+                                   style="white-space: nowrap; margin-left: 10px;"></p>
+                            </div>
+                            <div class="descriptionProduct text-break mt-2" th:text="${top4PopularCategories[3]}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="team" class="mt-5">
+            <h2 class="mb-4">Наши мастера</h2>
+            <div class="row justify-content-between">
+                <div class="col-md-4" th:each="top3Master : ${top3Master}">
+                    <div class="card flex-column homePageMasterCard mb-5">
+                        <div class="d-flex flex-column align-items-center  p-3">
+                            <img th:src="${top3Master[3]}" class="card-img-top customImgHomePage" alt="">
+                            <h5 class="card-title" th:text="${top3Master[1]}">Имя мастера 1</h5>
+                        </div>
+                        <p class="card-text" th:text="${top3Master[4]}">Опыт 10 лет. Специализация: стрижки, окрашивание.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div th:replace="~{offcanvas :: copy}"></div>
+
+<button class="btn fixed-button" type="button" data-bs-toggle="offcanvas"
+        data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">Записаться
+</button>
+
+
+</div>
+<div class="bg-body-tertiary  fot">
+    <footer class="py-3 my-4">
+        <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Главная</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">О нас</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Товары</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Услуги</a></li>
+        </ul>
+        <p class="text-center text-body-secondary">© 2024 Танго</p>
+    </footer>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/js/bootstrap-datepicker.min.js"></script>
+</body>
+
+
+</html>
+

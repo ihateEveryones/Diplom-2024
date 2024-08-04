@@ -1,0 +1,46 @@
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+    justify-content: center;
+    align-items: flex-start; /* изменено с center на flex-start */
+}
+@media (max-width: 600px) {
+    .modal-content {
+        width: 100%; /* на маленьких экранах занимает всю ширину */
+        max-width: none; /* убираем максимальную ширину */
+    }
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: 100px auto 0 auto; /* добавлен отступ сверху */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px; /* уменьшенный размер */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow-y: auto; /* прокрутка по вертикали */
+}
+.close {
+    color: #aaa;
+    align-self: flex-end;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}

@@ -1,0 +1,12 @@
+.mainWindow{
+    border: 2px solid #b3b3b3; /* Цвет границы и толщина рамки */
+    border-radius: 8px; /* Закругление углов */
+    padding: 20px; /* Отступ внутри рамки */
+    margin-top: 20px; /* Отступ сверху */
+    background-color: #dff9ff;
+}
+table {
+    border-collapse: collapse; /* чтобы закругление было применено к внешнему контуру таблицы */
+    border-radius: 10px; /* радиус закругления */
+    overflow: hidden; /* чтобы закругление применялось только к контуру таблицы */
+}

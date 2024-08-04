@@ -1,0 +1,231 @@
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        let currentReportType = '';
+
+        function createReport(reportType) {
+            currentReportType = reportType;
+            let url;
+            if (reportType === 'master') {
+                url = "/createReportsMaster";
+            } else if (reportType === 'categoryService') {
+                url = "/createReportsCategoryService";
+            } else {
+                let startDate = document.getElementById("startDate").value;
+                let endDate = document.getElementById("endDate").value;
+                if (!startDate || !endDate) {
+                    alert("Пожалуйста, укажите начальную и конечную дату.");
+                    return;
+                }
+                url = `/createReportsDailySalesForYear?startDate=${startDate}&endDate=${endDate}`;
+            }
+
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function (data) {
+                    if (reportType === 'master') {
+                        generateReportMaster(data);
+                    } else if (reportType === 'categoryService') {
+                        generateReportCategoryService(data);
+                    } else {
+                        generateReportDailySales(data);
+                    }
+                },
+                error: function (error) {
+                    console.error("Ошибка при создании отчета", error);
+                }
+            });
+        }
+
+        function generateReportMaster(data) {
+            let reportContent = `
+            <h2>Отчет по мастерам</h2>
+            <table class="table">
+                <thead class="table-light">
+                    <tr>
+                        <th>Имя мастера</th>
+                        <th>Общее количество заказов</th>
+                        <th>Общий объем продаж</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+            data.forEach(order => {
+                reportContent += `
+                <tr>
+                    <td>${order[0]}</td>
+                    <td>${order[1]}</td>
+                    <td>${order[2]}</td>
+                </tr>`;
+            });
+
+            reportContent += `
+                </tbody>
+            </table>`;
+
+            document.getElementById("reportContainerMaster").innerHTML = reportContent;
+            document.getElementById("reportContainerMaster").style.display = "block";
+            document.getElementById("reportContainerCategoryService").style.display = "none";
+            document.getElementById("reportContainerDailySales").style.display = "none";
+            document.getElementById("downloadButton").style.display = "block";
+        }
+
+        function generateReportCategoryService(data) {
+            let reportContent = `
+            <h2>Отчет по категориям услуг</h2>
+            <table class="table">
+                <thead class="table-light">
+                    <tr>
+                        <th>Категория услуги</th>
+                        <th>Название услуги</th>
+                        <th>Общее количество заказов</th>
+                        <th>Общий объем продаж</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+            data.forEach(row => {
+                reportContent += `
+                <tr>
+                    <td>${row[0]}</td>
+                    <td>${row[1]}</td>
+                    <td>${row[2]}</td>
+                    <td>${row[3]}</td>
+                </tr>`;
+            });
+
+            reportContent += `
+                </tbody>
+            </table>`;
+
+            document.getElementById("reportContainerCategoryService").innerHTML = reportContent;
+            document.getElementById("reportContainerCategoryService").style.display = "block";
+            document.getElementById("reportContainerMaster").style.display = "none";
+            document.getElementById("reportContainerDailySales").style.display = "none";
+            document.getElementById("downloadButton").style.display = "block";
+        }
+
+        function generateReportDailySales(data) {
+            let reportContent = `
+            <h2>Отчет по ежедневным продажам</h2>
+            <table class="table">
+                <thead class="table-light">
+                    <tr>
+                        <th>Дата</th>
+                        <th>Общий объем продаж</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+            data.forEach(row => {
+                let date = new Date(row[0]);
+                let formattedDate = date.toISOString().split('T')[0];
+                reportContent += `
+                <tr>
+                    <td>${formattedDate}</td>
+                    <td>${row[1]}</td>
+                </tr>`;
+            });
+
+            reportContent += `
+                </tbody>
+            </table>`;
+
+            document.getElementById("reportContainerDailySales").innerHTML = reportContent;
+            document.getElementById("reportContainerDailySales").style.display = "block";
+            document.getElementById("reportContainerMaster").style.display = "none";
+            document.getElementById("reportContainerCategoryService").style.display = "none";
+            document.getElementById("downloadButton").style.display = "block";
+        }
+
+        function downloadExcel() {
+            let url;
+            if (currentReportType === 'master') {
+                url = "/createReportsMaster";
+            } else if (currentReportType === 'categoryService') {
+                url = "/createReportsCategoryService";
+            } else {
+                let startDate = document.getElementById("startDate").value;
+                let endDate = document.getElementById("endDate").value;
+                url = `/createReportsDailySalesForYear?startDate=${startDate}&endDate=${endDate}`;
+            }
+
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function (data) {
+                    let wb = XLSX.utils.book_new();
+                    let wsData;
+                    let fileName;
+                    if (currentReportType === 'master') {
+                        wsData = [
+                            ["Имя мастера", "Общее количество заказов", "Общий объем продаж"]
+                        ];
+                        wsData.push(...data);
+                        fileName = "Отчет по мастерам и их выполненным заказам.xlsx";
+                    } else if (currentReportType === 'categoryService') {
+                        wsData = [
+                            ["Категория услуги", "Название услуги", "Общее количество заказов", "Общий объем продаж"]
+                        ];
+                        wsData.push(...data);
+                        fileName = "Отчет по категориям услуг.xlsx";
+                        console.log(wsData);
+                    } else if (currentReportType === 'dailySales') {
+                        wsData = [
+                            ["Дата", "Общий объем продаж"]
+                        ];
+                        wsData.push(...data.map(row => [new Date(row[0]).toLocaleDateString(), row[1]]));
+                        let startDate = document.getElementById("startDate").value;
+                        let endDate = document.getElementById("endDate").value;
+                        fileName = `Отчет по ежедневным продажам с ${startDate} по ${endDate}.xlsx`;
+                    }
+
+                    let ws = XLSX.utils.aoa_to_sheet(wsData);
+                    XLSX.utils.book_append_sheet(wb, ws, "Отчет");
+                    XLSX.writeFile(wb, fileName);
+                },
+                error: function (error) {
+                    console.error("Ошибка при создании отчета", error);
+                }
+            });
+        }
+        $('#createReportMaster').on('click', function() {
+            createReport('master');
+        });
+
+        $('#createReportCategoryService').on('click', function() {
+            createReport('categoryService');
+        });
+
+        $('#createReportDailySales').on('click', function() {
+            createReport('dailySales');
+        });
+
+        $('#downloadButton').on('click', function() {
+            downloadExcel();
+        });
+    });
+
+</script>
+<body>
+<div class="container">
+    <div>
+        <label for="startDate">Начальная дата:</label>
+        <input type="date" id="startDate">
+        <label for="endDate">Конечная дата:</label>
+        <input type="date" id="endDate">
+
+    </div>
+    <div class="pt-3 pb-3 d-flex justify-content-between">
+        <button id="createReportMaster" class="btn" >Создать отчет по мастерам</button>
+        <button id="createReportCategoryService" class="btn">Создать отчет по категориям услуг</button>
+        <button id="createReportDailySales"  class="btn">Создать отчет по ежедневным продажам</button>
+    </div>
+    <button id="downloadButton" class="btn" style="display:none;">Скачать отчет в Excel</button>
+
+    <div id="reportContainerDailySales" style="display:none;"></div>
+    <div id="reportContainerMaster" style="display:none;"></div>
+    <div id="reportContainerCategoryService" style="display:none;"></div>
+
+</div>

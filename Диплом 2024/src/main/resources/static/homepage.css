@@ -1,0 +1,63 @@
+.cardHomePage:hover {
+    transform: translateY(-10px);
+}
+
+.cardHomePage {
+    cursor: pointer;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    padding: 10px;
+    /* border: 1px solid #ccc; */
+    /* border-radius: 5px; */
+    display: flex;
+    flex-direction: column;
+
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.minSizeCard {
+    height: 300px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.productImgCard{
+    width: 100%;
+    max-height: 150px;
+    padding: 0 20px;
+    margin-bottom: 10px;
+    object-fit: cover;
+}
+.productImgCard{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+.imgCard{
+    max-width: 100px;
+    max-height: 100px;
+    width: auto;
+    height: auto;
+    object-fit: cover;
+}
+.flex-grow{
+flex-grow: 0.5;
+}
+.homePageMasterCard{
+    height: 300px;
+    width: 100%;
+    overflow: hidden;
+}
+.customImgHomePage {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin: 10px;
+}
+

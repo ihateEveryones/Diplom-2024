@@ -1,0 +1,163 @@
+
+<script>
+    function fillEditForm(id_user,email,surname, name, patronymic, phone_number,role, rolesOptions) {
+        $('#editId').val(id_user);
+        $('#editEmail').val(email);
+        $('#editSurname').val(surname);
+        $('#editPatronymic').val(patronymic);
+        $('#editPhoneNumber').val(phone_number);
+        $('#editName').val(name);
+        $('#editRole').html(rolesOptions).val(role); // Заполняем options для select
+
+    }
+
+    $(document).ready(function () {
+        $('.editUserBtn').click(function() {
+            var id = $(this).data('id');
+            var email = $(this).closest('tr').find('input[name="user_email"]').val();
+            var name = $(this).closest('tr').find('input[name="user_name"]').val();
+            var surname = $(this).closest('tr').find('input[name="surname"]').val();
+            var patronymic = $(this).closest('tr').find('input[name="patronymic"]').val();
+            var phone_number = $(this).closest('tr').find('input[name="phone_number"]').val();
+            var role = $(this).closest('tr').find('select[name="user_id_role"]').val();
+            var rolesOptions = $(this).closest('tr').find('select[name="user_id_role"]').html();
+            fillEditForm(id, email,surname, name, patronymic, phone_number,role, rolesOptions);
+
+            // Обновляем список ролей в скрытой форме
+
+
+
+            // Отправляем AJAX запрос
+            $.ajax({
+                type: 'POST',
+                url: '/editUser',
+                data: $('#editUsersForm').serialize(),
+                success: function(response) {
+                    toastr.options.progressBar = true;
+                    toastr.success('Пользователь успешно изменен!');
+                },
+                error: function(xhr, status, error) {
+                    toastr.error('An error occurred while updating the user!');
+                }
+            });
+        });
+
+        $(document).on('submit', '.deleteServiceForm', function (e) {
+            e.preventDefault(); // Предотвращаем обычное поведение формы
+            var formData = $(this).serialize(); // Сериализуем данные формы
+            var form = $(this);
+            var url = $(this).attr('action');
+            $.ajax({
+                type: 'POST',
+                url: url, // Адрес обработчика формы на сервере
+                data: formData,
+                success: function (response) {
+                    toastr.options.progressBar = true;
+                    toastr.success('Услуга успешно удалена!');
+                    // Если запрос успешен, вы можете выполнить дополнительные действия здесь
+                    form.closest('tr').remove();
+
+                },
+                error: function (error) {
+                    toastr.error('Произошла ошибка при удалении услуги!');
+
+                }
+            });
+        });
+
+    });
+</script>
+<div></div>
+<table class="table">
+    <thead class="table-light">
+    <tr>
+        <th scope="col" class="text-center">id_user</th>
+        <th scope="col" class="text-center">email</th>
+        <th scope="col" class="text-center">Фамилия</th>
+        <th scope="col" class="text-center">Имя</th>
+        <th scope="col" class="text-center">Отчество</th>
+        <th scope="col" class="text-center">Телефон</th>
+        <th scope="col" class="text-center">Роль</th>
+        <th scope="col" class="text-center">Изменить</th>
+        <th scope="col" class="text-center">Удалить</th>
+    </tr>
+    </thead>
+<!--    <tbody>-->
+<!--    <tr th:each="service : ${services}">-->
+
+<!--        <form th:action="@{/editService}" th:id="'editServicesForm" method="post">-->
+<!--        <input type="hidden" name="id" th:value="${service.id_service}"/>-->
+<!--            <td class="text-center " type="text"><input class="text-center form-control" readonly type="text" name="id_service" th:value="${service.id_service}"/></td>-->
+<!--            <td class="text-center" type="text"><input class="text-center form-control" type="text" name="name_service" th:value="${service.name_service}"/></td>-->
+<!--            <td class="text-center" type="text"><input class="text-center form-control " type="text" name="price" th:value="${service.price}"/></td>-->
+<!--            <td class="text-center">-->
+<!--                <button type="submit" class="btn btn-secondary btn-sm">Изменить</button>-->
+<!--            </td>-->
+<!--        </form>-->
+<!--        <td class="text-center">-->
+<!--        <form method="POST" class="deleteServiceForm" id="deleteServiceForm" th:action="@{/deleteService}">-->
+<!--            <input type="hidden" name="id" th:value="${service.id_service}"/>-->
+
+<!--                <button type="submit" class="btn btn-secondary btn-sm">Удалить</button>-->
+
+<!--        </form>-->
+<!--        </td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+    <tbody>
+    <tr th:each="user : ${users}" >
+        <td class="text-center" type="text">
+            <input type="text" class="form-control" readonly name="id_user" th:value="${user.id}"/>
+        </td>
+        <td class="text-center" type="text">
+            <input type="text" class="form-control" name="user_email" th:value="${user.email}"/>
+        </td>
+        <td class="text-center" type="text">
+            <input type="text" class="form-control" name="surname" th:value="${user.surname}"/>
+        </td>
+        <td class="text-center" type="text">
+            <input type="text" class="form-control" name="user_name" th:value="${user.name}"/>
+        </td>
+        <td class="text-center" type="text">
+            <input type="text" class="form-control" name="patronymic" th:value="${user.patronymic}"/>
+        </td>
+        <td class="text-center" type="text">
+            <input type="text" class="form-control" name="phone_number" th:value="${user.phone_number}"/>
+        </td>
+        <td class="text-center" type="text">
+            <select name="user_id_role" class="form-control">
+                <option th:each="role : ${roles}"
+                        th:value="${role.id_roles}"
+                        th:text="${role.name}"
+                        th:selected="${role.id_roles == user.id_roles.id_roles}">
+                </option>
+            </select>
+<!--            <input type="text" class="form-control" name="user_id_role" th:value="${user.id_roles.id_roles}"/>-->
+        </td>
+
+        <td class="text-center">
+            <button type="button" class="btn  btn-sm editUserBtn" th:data-id="${user.id}">Изменить</button>
+        </td>
+
+        <td class="text-center">
+            <form method="POST" class="deleteUserForm" id="deleteUserForm" th:action="@{/deleteUser}">
+                <input type="hidden" name="id_user" th:value="${user.id}" />
+
+                <button type="submit" class="btn  btn-sm">Удалить</button>
+
+            </form>
+        </td>
+    </tr>
+    </tbody>
+
+</table>
+<form id="editUsersForm" method="post" style="display: none;">
+    <input type="hidden" name="id_user" id="editId"/>
+    <input type="text" name="user_email" id="editEmail"/>
+    <input type="text" name="surname" id="editSurname"/>
+    <input type="text" name="user_name" id="editName"/>
+    <input type="text" name="patronymic" id="editPatronymic"/>
+    <input type="text" name="phone_number" id="editPhoneNumber"/>
+    <select name="user_id_role" id="editRole"></select>
+    <!-- Остальные поля формы -->
+</form>

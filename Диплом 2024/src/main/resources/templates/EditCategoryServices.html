@@ -1,0 +1,121 @@
+
+
+<script>
+    $(document).ready(function () {
+        function fillEditForm(id, name) {
+            $('#editId').val(id);
+            $('#editNameServiceProduct').val(name);
+        }
+
+        function updateTable(sortOrder) {
+
+        }
+
+
+        var sortOrder = /*[[${sortOrder}]]*/ 'asc'; // Используем стандартное значение, если Thymeleaf не сработает// Используем стандартное значение, если Thymeleaf не сработает
+
+        $(document).on('click', '.sortable', function () {
+
+            sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+            $.ajax({
+                type: 'GET',
+                url: '/editDeleteServiceCategory',
+                data: {
+                    sortOrder: sortOrder
+                },
+                success: function (data) {
+                    $('#serviceCategoryTable').html($(data).find('#serviceCategoryTable').html());
+
+                },
+                error: function (xhr, status, error) {
+                    // Обработка ошибок, если требуется
+                }
+            });
+        });
+        $(document).on('click', '.editServiceCategoryBtn', function () {
+
+            var id = $(this).data('id');
+            var name = $(this).closest('tr').find('input[name="name_category"]').val();
+
+            fillEditForm(id, name);
+
+            $.ajax({
+                type: 'POST',
+                url: '/editServiceCategory',
+                data: $('#editServiceCategoryForm').serialize(),
+                success: function (response) {
+                    toastr.options.progressBar = true;
+                    toastr.success('Услуга успешно изменена!');
+
+                },
+                error: function (xhr, status, error) {
+                    toastr.error('Произошла ошибка при изменении услуги!');
+                }
+            });
+        });
+        $(document).on('click', '.deleteServiceCategory', function (e) {
+            e.preventDefault();
+            var formData = $(this).closest('form').serialize();
+            var form = $(this).closest('form');
+            var url = form.attr('action');
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: formData,
+                success: function (response) {
+                    toastr.options.progressBar = true;
+                    toastr.success('Услуга успешно удалена!');
+                    form.closest('tr').remove();
+                },
+                error: function (xhr, status, error) {
+                    toastr.error('Произошла ошибка при удалении услуги!');
+                }
+            });
+        });
+    });
+</script>
+
+<div id="content">
+    <table class="table" id="serviceCategoryTable">
+        <thead class="table-light">
+        <tr>
+            <th scope="col" class="text-center sortable" id="idCategoryServiceHeader" style="cursor: pointer;">id_category
+            </th>
+            <th scope="col" class="text-center">name_category</th>
+            <th scope="col" class="text-center">Изменить</th>
+            <th scope="col" class="text-center">Удалить</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="category : ${categories}">
+
+
+            <td class="text-center " type="text"><input class="text-center form-control" readonly type="text"
+                                                        name="id_category" th:value="${category.id_category}"/></td>
+            <td class="text-center" type="text"><input class="text-center form-control" type="text" name="name_category"
+                                                       th:value="${category.name_category}"/></td>
+            <td class="text-center">
+                <button type="submit" class="btn  btn-sm editServiceCategoryBtn"
+                        th:data-id="${category.id_category}">Изменить
+                </button>
+            </td>
+
+            <td class="text-center">
+                <form method="POST" class="deleteServiceCategory" th:action="@{/deleteServiceCategory}">
+                    <input type="hidden" name="id" th:value="${category.id_category}"/>
+                    <button type="submit" class="btn  btn-sm">Удалить</button>
+
+                </form>
+            </td>
+
+
+        </tr>
+        </tbody>
+
+    </table>
+</div>
+<form id="editServiceCategoryForm" method="post" style="display: none;">
+    <input type="hidden" name="id" id="editId"/>
+    <input type="text" name="name_category" id="editNameServiceProduct"/>
+</form>

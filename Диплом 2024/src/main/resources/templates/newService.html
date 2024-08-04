@@ -1,0 +1,180 @@
+<script>
+    $(document).ready(function () {
+        function updateServiceAndCategoryLists() {
+            $.ajax({
+                type: 'GET',
+                url: '/update-services-categories',
+                success: function(response) {
+                    var services = response.services;
+                    var categories = response.categories;
+
+                    var $serviceSelect = $('#exampleService');
+                    var $categorySelect = $('#exampleCategoryService');
+
+                    $serviceSelect.empty();
+                    $categorySelect.empty();
+
+                    services.forEach(function(service) {
+                        $serviceSelect.append('<option value="' + service.id_service + '">' + service.name_service + '</option>');
+                    });
+
+                    categories.forEach(function(category) {
+                        $categorySelect.append('<option value="' + category.id_category + '">' + category.name_category + '</option>');
+                    });
+                },
+                error: function(error) {
+                    toastr.error('Произошла ошибка при обновлении списка услуг и категорий!');
+                }
+            });
+        }
+
+
+        $(document).on('submit', '#createServiceForm', function (e) {
+            e.preventDefault(); // Предотвращаем обычное поведение формы
+            var formData = $(this).serialize(); // Сериализуем данные формы
+            $.ajax({
+                type: 'POST',
+                url: '/createService', // Адрес обработчика формы на сервере
+                data: formData,
+                success: function (response) {
+                    toastr.options.progressBar = true;
+                    toastr.success('Услуга успешно добавлена!');
+                    // Если запрос успешен, вы можете выполнить дополнительные действия здесь
+
+                    $('#createServiceForm').get(0).reset();
+                    $('#duration').val('00:00');
+                    updateServiceAndCategoryLists();
+                },
+                error: function (error) {
+                    toastr.error('Произошла ошибка при добавлении услуги!');
+
+                }
+            });
+        });
+        $(document).on('submit', '#createCategory', function (e) {
+            e.preventDefault(); // Предотвращаем обычное поведение формы
+            var formData = $(this).serialize(); // Сериализуем данные формы
+            $.ajax({
+                type: 'POST',
+                url: '/createCategory', // Адрес обработчика формы на сервере
+                data: formData,
+                success: function (response) {
+                    toastr.options.progressBar = true;
+                    toastr.success('Категория успешно добавлена!');
+                    // Если запрос успешен, вы можете выполнить дополнительные действия здесь
+
+                    $('#createCategory').get(0).reset();
+                    updateServiceAndCategoryLists();
+                },
+                error: function (error) {
+                    toastr.error('Произошла ошибка при добавлении категории!');
+
+                }
+            });
+        });
+        $(document).on('submit', '#createCategoryService', function (e) {
+            e.preventDefault(); // Предотвращаем обычное поведение формы
+            var formData = $(this).serialize(); // Сериализуем данные формы
+            $.ajax({
+                type: 'POST',
+                url: '/createCategoryService', // Адрес обработчика формы на сервере
+                data: formData,
+                success: function (response) {
+                    toastr.options.progressBar = true;
+                    toastr.success('Категория успешно добавлена к услуге!');
+                    // Если запрос успешен, вы можете выполнить дополнительные действия здесь
+
+                    // $('#createCategoryService').get(0).reset();
+                },
+                error: function (error) {
+                    toastr.error('Произошла ошибка при добавлении категории к услуге!');
+
+                }
+            });
+        });
+    });
+</script>
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-6 mx-auto">
+            <form id="createServiceForm"
+                  method="post"
+                  role="form"
+                  th:action="@{/createService}"
+
+            >
+                <h1>Создать услугу</h1>
+
+                <div class="mb-3">
+                    <label class="form-label" for="name_service">Название услуги</label>
+                    <input class="form-control" id="name_service" name="name_service" type="text">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="price">Цена</label>
+                    <input class="form-control" id="price" name="price">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="description">Описание</label>
+                    <textarea class="form-control" id="description" name="description"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="duration">Длительность</label>
+                    <input class="form-control" id="duration" name="duration" value="00:00">
+                </div>
+                <div class="mb-3">
+                    <button class="btn  mb-3" type="submit">Создать услуги</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-6 mx-auto">
+            <form id="createCategory"
+                  method="post"
+                  role="form"
+                  th:action="@{/createCategory}"
+
+            >
+                <h1>Создать категорию услуги</h1>
+
+                <div class="mb-3">
+                    <label class="form-label" for="name_category">Название категории</label>
+                    <input class="form-control" id="name_category" name="name_category" type="text">
+                </div>
+                <div class="mb-3">
+                    <button class="btn  mb-3" type="submit">Создать категорию</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-6 mx-auto">
+            <form id="createCategoryService"
+                  method="post"
+                  role="form"
+                  th:action="@{/createCategoryService}"
+
+            >
+                <h1>Добавить услугу к категории</h1>
+                <div class="form-group">
+                    <label for="exampleService">Выберите услугу</label>
+                    <select class="form-control" id="exampleService" name="id_service">
+                        <!--  <option   th:each="services : ${service}" th:value="services" th:text="${names.name_service}"></option>-->
+                        <option th:each="services : ${service}" th:value="${services.id_service}"
+                                th:text="${services.name_service}"></option>
+
+                        <!-- Добавьте здесь другие элементы, если нужно -->
+                    </select>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="exampleCategoryService">Выберите категорию услуги</label>
+                    <select class="form-control" id="exampleCategoryService" name="id_category">
+                        <option th:each="categories : ${category}" th:value="${categories.id_category}"
+                                th:text="${categories.name_category}"></option>
+
+                        <!-- Добавьте здесь другие элементы, если нужно -->
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <button class="btn mb-3" type="submit">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

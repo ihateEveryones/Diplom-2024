@@ -1,0 +1,553 @@
+.btn {
+    background-color: #00d0ff;
+}
+body {
+    font-family: Arial, sans-serif;
+
+
+}
+
+
+.profile {
+    position: relative;
+    display: inline-block;
+}
+.logout-btn{
+    color: #000000a6;
+}
+.profile-options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.profile:hover .profile-options {
+    display: block;
+}
+
+.min-profile-image {
+    width: 50px; /* Укажите здесь нужную ширину изображения */
+    height: 50px; /* Вы можете использовать auto, чтобы сохранить соотношение сторон */
+    cursor: pointer; /* Изменение курсора при наведении на изображение */
+    border-radius: 50%;
+}
+.profile-image {
+    width: 150px; /* Укажите здесь нужную ширину изображения */
+    height: 150px; /* Вы можете использовать auto, чтобы сохранить соотношение сторон */
+    cursor: pointer; /* Изменение курсора при наведении на изображение */
+    border-radius: 50%;
+}
+
+
+
+
+
+/*form label {*/
+/*    display: block;*/
+/*    margin-bottom: 5px;*/
+/*}*/
+
+/*form input {*/
+/*    width: 100%;*/
+/*    padding: 8px;*/
+/*    margin-bottom: 10px;*/
+/*    border: 1px solid #ccc;*/
+/*    border-radius: 4px;*/
+/*}*/
+
+
+
+
+.btn:hover {
+    background-color: #00b8e6; /* Немного более темный оттенок для эффекта наведения */
+
+}
+
+.offcanvas-end {
+    width: 30% !important; /* Настройте ширину по вашему усмотрению */
+    max-width: none; /* Установите максимальную ширину на ваш выбор */
+}
+
+.btn:active {
+    background-color: #00b8e6; /* Немного более темный оттенок для эффекта наведения */
+
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 2000px; /* Просто для демонстрации прокрутки */
+}
+
+body {
+    height: 2000px; /* Просто для демонстрации прокрутки */
+}
+
+.fixed-button {
+    position: fixed;
+    bottom: 160px;
+    right: 20px;
+    z-index: 1000; /* Для управления слоем над другими элементами */
+}
+
+/*.fixed-button-Continue {*/
+/*    position: fixed;*/
+/*    bottom: 50px;*/
+
+/*    z-index: 1000; !* Для управления слоем над другими элементами *!*/
+/*}*/
+.endOrderButton {
+    width: 100% /* Ширина кнопки (вычитаем двойной отступ с каждой стороны) */
+
+}
+
+.orderForm input[type="radio"],
+.orderForm input[type="checkbox"] {
+    display: none;
+}
+
+.offcanvas {
+    overflow: hidden;
+    padding: 20px;
+}
+
+
+
+.selection-box {
+    cursor: pointer;
+    border: 1px solid #f8f9fa; /* Добавляет рамку цвета, который был фоном */
+    border-radius: 15px; /* Закругляет углы рамки */
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.fixed-button-Continue {
+    position: absolute;
+    bottom: 30px; /* Отступ от нижнего края контейнера */
+    left: 50%; /* Позиционирование от центра контейнера */
+    transform: translateX(-50%); /* Сдвиг влево на 50% от своей ширины для центрирования */
+    width: calc(100% - 40px); /* Ширина кнопки (вычитаем двойной отступ с каждой стороны) */
+    /*max-width: 500px; !* Максимальная ширина кнопки *!*/
+    z-index: 999; /* Поднимаем кнопку над другими элементами */
+    /* Добавьте любые другие стили, если необходимо */
+}
+
+.card {
+    display: flex;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: row;
+
+    padding-right: 0px;
+    padding-left: 0px;
+    justify-content: space-between;
+}
+
+.masterInfo {
+    display: flex;
+    align-items: start;
+    flex-grow: 1;
+    gap: 10px;
+}
+
+.masterAvatar {
+    margin-right: 10px; /* Отступ между аватаркой и именем */
+}
+
+.masterDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.masterName {
+    flex-grow: 1; /* Занимает доступное пространство */
+}
+
+.masterRadio {
+    margin-left: 10px; /* Отступ между контентом и радиокнопкой */
+}
+
+.serviceInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.productInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+input[type="radio"][name="time"] {
+    display: none;
+}
+
+/* Стили для label элементов */
+.time-option {
+    display: inline-block;
+    background-color: #EAEEF4; /* Синий цвет по умолчанию */
+    color: black;
+    padding: 7px 45px; /* Увеличенные размеры кнопок */
+    margin: 7px; /* Увеличенный отступ между кнопками */
+    border-radius: 20px; /* Более скругленные углы */
+    cursor: pointer;
+    user-select: none; /* Запрещаем выделение текста */
+    transition: background-color 0.3s;
+}
+
+.link {
+    display: inline-block;
+}
+
+/* Стили для выбранных кнопок */
+.cloned-master-card .select-master {
+    cursor: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.clonedServiceCard .select-service {
+    cursor: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.clonedProductCard .select-product {
+    cursor: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+input[type="radio"]:checked + label.time-option,
+label.time-option:has(input[type="radio"]:checked) {
+    background-color: #00d0ff; /* Цвет фона для выбранной кнопки */
+}
+
+/* Стили для наведения курсора */
+.time-option:hover {
+    background-color: #00d0ff;
+}
+
+.offcanvas-body {
+    padding: 20px;
+}
+
+
+.hide {
+    display: none;
+}
+
+.iconProfile {
+    font-size: 30px;
+}
+
+.customImg {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+}
+.custom-nav-link{
+    font-size: 25px!important;
+}
+.logo{
+    max-width: 100px;
+    max-height: 60px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    margin-left: 16px;
+}
+.fakeLink {
+    background: none;
+    border: none;
+    color: #0d6efd;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+}
+
+.imgSelection {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+}
+
+.master-info {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px; /* Промежуток между текстом и изображением */
+}
+
+.fot {
+    flex-shrink: 0;
+}
+
+html, body {
+    height: 100%;
+}
+
+.content {
+    flex: 1 0 auto;
+
+}
+
+.pt3rem {
+    padding-top: 3rem;
+}
+
+.card {
+    cursor: pointer;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    padding: 10px;
+    /*border: 1px solid #ccc;*/
+    /*border-radius: 5px;*/
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+}
+
+.card-body {
+    background-color: #fff;
+}
+
+.allProductCard {
+    margin-top: 30px;
+    margin-bottom: 10px;
+    padding: 10px;
+    /*border: 1px solid #ccc;*/
+    /*border-radius: 5px;*/
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+
+}
+
+.allProductCard:hover {
+    transform: translateY(-10px);
+}
+
+.allServicesCard {
+    /*cursor: pointer;*/
+    margin-top: 30px;
+    margin-bottom: 10px;
+    padding: 10px;
+    /*border: 1px solid #ccc;*/
+    /*border-radius: 5px;*/
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.allServicesCard:hover {
+    transform: translateY(-10px);
+}
+
+.serviceSpan {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 24px;
+
+}
+
+.card-title {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 24px;
+    overflow: hidden;
+    display: inline;
+    color: #2B3134;
+
+
+}
+
+.serviceDuration p {
+    margin-bottom: 0.3rem;
+}
+
+.pServicePrice:after {
+    content: ' \20BD';
+}
+
+.pProductPrice:after {
+    content: ' \20BD';
+}
+
+.pl-10 {
+    display: flex;
+    padding-left: 10px;
+}
+
+.spanTotalPrice {
+    display: flex;
+    justify-content: space-between;
+}
+
+#spanTotalPrice::after {
+    content: ' \20BD';
+}
+
+.horizontalLine {
+    position: relative;
+    margin: 20px 0;
+}
+
+.horizontalLine::after {
+    content: "";
+    display: block;
+    height: 1px;
+    width: 100%;
+    background-color: #EAEEF4;
+    position: absolute;
+    bottom: 0;
+}
+
+.serviceCheckbox {
+    display: flex;
+    align-items: baseline;
+}
+
+.productCheckbox {
+    display: flex;
+    align-items: baseline;
+}
+
+.pServicePrice {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+    color: black;
+}
+
+.servicePrice {
+    margin-right: 0.5rem;
+}
+
+.pProductPrice {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+    color: black;
+}
+
+.priceProduct {
+    margin-right: 0.5rem;
+}
+
+a {
+    text-decoration: none;
+
+    display: inline-block;
+
+}
+
+.dayOfWeekMonth {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: #808080;
+}
+
+.allDuration {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: #808080;
+}
+
+.serviceDuration {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    color: #808080;
+}
+
+.descriptionProduct {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    color: #808080;
+    overflow: hidden;
+}
+
+.serviceEditIcon {
+    display: flex;
+    justify-content: space-between;
+}
+
+.productEditIcon {
+    display: flex;
+    justify-content: space-between;
+}
+
+.productSpan {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 24px;
+
+}
+
+.dateTime-card {
+    cursor: pointer;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    padding: 10px;
+
+}
+
+.selCat {
+
+    margin-top: 30px;
+    margin-bottom: 10px;
+    padding: 10px;
+
+}
+
+.prodCat {
+
+    margin-top: 30px;
+    margin-bottom: 10px;
+    padding: 10px;
+
+}

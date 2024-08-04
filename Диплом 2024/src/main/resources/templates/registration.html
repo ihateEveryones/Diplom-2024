@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/css/bootstrap-datepicker.min.css"
+          rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css" type="text/css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+</head>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <img class="navbar-brand  logo" src="/image/logo2.png">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto custom-nav-link">
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="/homepage">Главная</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/servicesPage">Услуги</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/productPage">Товары</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <th:block th:if="${#authorization.expression('isAuthenticated()')}">
+                        <div class="profile">
+                            <!--                            <a th:href="@{/profile/}">-->
+                            <!--                                <img th:src="@{${image}}" class="img-fluid  min-profile-image" alt="Profile Image"/>-->
+                            <!--                            </a>-->
+                            <div class="">
+                                <a class="logout-btn" th:href="@{/logout}">Выйти</a>
+                            </div>
+                        </div>
+                    </th:block>
+                    <th:block th:unless="${#authorization.expression('isAuthenticated()')}">
+                        <a class="nav-link" href="/login">Авторизация</a>
+                    </th:block>
+                </li>
+                <th:block th:unless="${#authorization.expression('isAuthenticated()')}">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/registration">Регистрация</a>
+                    </li>
+                </th:block>
+            </ul>
+        </div>
+    </div>
+</nav>
+<body>
+<div class="container content">
+    <div class="row mt-5">
+        <div class="col-6 mx-auto formNextSendCode">
+            <form id="sendCode"
+                    th:object="${user}"
+            >
+                <h1 class="d-flex justify-content-center">Зарегистрироваться</h1>
+                <div th:if="${param.success}">
+                    <div class="alert alert-info">
+                        Регистрация прошла успешно!
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="surname">Фамилия</label>
+                    <input class="form-control" id="surname" name="surname" type="text">
+                    <p class="text-danger" th:errors="*{surname}"
+                       th:if="${#fields.hasErrors('surname')}"></p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="name">Имя</label>
+                    <input class="form-control" id="name" name="name" type="text">
+                    <p class="text-danger" th:errors="*{name}"
+                       th:if="${#fields.hasErrors('name')}"></p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="patronymic">Отчество</label>
+                    <input class="form-control" id="patronymic" name="patronymic" type="text">
+                    <p class="text-danger" th:errors="*{patronymic}"
+                       th:if="${#fields.hasErrors('patronymic')}"></p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="phone_number">Номер телефона</label>
+                    <input class="form-control" id="phone_number" name="phone_number" type="text">
+                    <p class="text-danger" th:errors="*{phone_number}"
+                       th:if="${#fields.hasErrors('phone_number')}"></p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="email">Email</label>
+                    <input class="form-control" id="email" name="email" type="email">
+                    <p class="text-danger" th:errors="*{email}"
+                       th:if="${#fields.hasErrors('email')}"></p>
+                </div>
+                <div class="mb-3">
+                    <label class="col-sm-2 col-form-label" for="password">Пароль</label>
+                    <input class="form-control" id="password" name="password" type="password">
+                    <p class="text-danger" th:errors="*{password}"
+                       th:if="${#fields.hasErrors('password')}"></p>
+                </div>
+                <div class="mb-3">
+                    <button class="btn w-100 mb-3" id="send-code-btn" type="submit">Зарегистрироваться</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-6 mx-auto hide formRegistration">
+            <form id="registration" >
+                <div class="pb-3">
+                    <label class="form-label" for="verificationCode">Код подтверждения:</label>
+                    <input class="form-control" type="text" id="verificationCode" name="verificationCode" required>
+                </div>
+                <div class="mb-3">
+                    <button class="btn w-100  mb-3"  type="submit">Продолжить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="bg-light mt-5">
+    <footer class="py-3 my-4">
+        <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+            <li class="nav-item"><a class="nav-link px-2 text-muted" href="#">Главная</a></li>
+            <li class="nav-item"><a class="nav-link px-2 text-muted" href="#">О нас</a></li>
+            <li class="nav-item"><a class="nav-link px-2 text-muted" href="#">Цены</a></li>
+            <li class="nav-item"><a class="nav-link px-2 text-muted" href="#">Вопросы</a></li>
+            <li class="nav-item"><a class="nav-link px-2 text-muted" href="#">Контакты</a></li>
+        </ul>
+        <p class="text-center text-muted">© 2024 Танго</p>
+    </footer>
+</div>
+
+<script crossorigin="anonymous"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var formNextSendCode = document.querySelector('.formNextSendCode');
+        var formRegistration = document.querySelector('.formRegistration');
+        $('#sendCode').submit(function (event) {
+            event.preventDefault();
+            var email = $('#email').val();
+            formNextSendCode.classList.add('hide');
+            formRegistration.classList.remove('hide');
+            $.ajax({
+                url: '/registration/send-verification-code',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    email: email
+                }),
+                success: function (data) {
+
+                    toastr.success('Код подтверждения отправлен на вашу почту !');
+                },
+                error: function (error) {
+                    var errorMessage = JSON.parse(error.responseText).error;
+                    toastr.error(errorMessage);
+                }
+            });
+
+        });
+        $('#registration').submit(function (event) {
+            event.preventDefault();
+            var name = $('#name').val();
+            var email = $('#email').val();
+            var surname = $('#surname').val();
+            var patronymic = $('#patronymic').val();
+            var phone_number = $('#phone_number').val();
+            var password = $('#password').val();
+            var verificationCode = $('#verificationCode').val();
+            $.ajax({
+                url: '/registration',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    name: name,
+                    email: email,
+                    password: password,
+                    surname:surname,
+                    patronymic:patronymic,
+                    phone_number:phone_number,
+                    verificationCode:verificationCode
+
+
+                }),
+                success: function (data) {
+
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                        toastr.success(data.message);
+                    }
+                },
+                error: function (xhr) {
+                    var response = JSON.parse(xhr.responseText);
+                    toastr.error(response.error);
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
